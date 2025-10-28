@@ -37,11 +37,9 @@ export function ViewActivityModal({ activity, onClose, onEdit }: ViewActivityMod
         </DialogHeader>
 
         <Tabs defaultValue="info" className="mt-4">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="info">Thông tin chung</TabsTrigger>
-            <TabsTrigger value="participants">Danh sách tham gia</TabsTrigger>
             <TabsTrigger value="files">Tài liệu đính kèm</TabsTrigger>
-            <TabsTrigger value="history">Lịch sử thay đổi</TabsTrigger>
           </TabsList>
 
           <TabsContent value="info" className="space-y-4 mt-4">
@@ -89,38 +87,23 @@ export function ViewActivityModal({ activity, onClose, onEdit }: ViewActivityMod
             </div>
           </TabsContent>
 
-          <TabsContent value="participants" className="mt-4">
-            <div className="border rounded-lg overflow-hidden">
-              <table className="w-full">
-                <thead className="bg-muted">
-                  <tr>
-                    <th className="px-4 py-2 text-left text-sm font-semibold">STT</th>
-                    <th className="px-4 py-2 text-left text-sm font-semibold">Họ và tên</th>
-                    <th className="px-4 py-2 text-left text-sm font-semibold">Chức vụ</th>
-                    <th className="px-4 py-2 text-left text-sm font-semibold">Đơn vị</th>
-                    <th className="px-4 py-2 text-left text-sm font-semibold">Vai trò</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y">
-                  {activity.participants.map((p, index) => (
-                    <tr key={p.id}>
-                      <td className="px-4 py-2 text-sm">{index + 1}</td>
-                      <td className="px-4 py-2 text-sm font-medium">{p.name}</td>
-                      <td className="px-4 py-2 text-sm">{p.position}</td>
-                      <td className="px-4 py-2 text-sm">{p.unit}</td>
-                      <td className="px-4 py-2 text-sm">{p.role || '-'}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <div className="mt-4 text-sm text-muted-foreground">
-              Tổng số: <span className="font-semibold">{activity.participants.length} người</span>
-            </div>
-          </TabsContent>
-
           <TabsContent value="files" className="mt-4">
             <div className="space-y-3">
+              {/* File danh sách tham gia */}
+              <div className="flex items-center gap-3 p-4 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors">
+                <FileText className="w-10 h-10 text-blue-600 flex-shrink-0" />
+                <div className="flex-1">
+                  <p className="font-semibold text-blue-900">Danh_sach_tham_gia.xlsx</p>
+                  <p className="text-sm text-blue-700 mt-1">
+                    Tổng số: <span className="font-semibold">{activity.participants.length} người</span> • 156 KB • Excel Spreadsheet
+                  </p>
+                </div>
+                <Button size="sm" variant="outline" className="border-blue-300 hover:bg-blue-50">
+                  Tải xuống
+                </Button>
+              </div>
+              
+              {/* Các tài liệu khác */}
               <div className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg hover:bg-muted/50 transition-colors">
                 <FileText className="w-8 h-8 text-blue-600" />
                 <div className="flex-1">
@@ -145,37 +128,6 @@ export function ViewActivityModal({ activity, onClose, onEdit }: ViewActivityMod
                 </div>
                 <Button size="sm" variant="outline">Tải xuống</Button>
               </div>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="history" className="mt-4">
-            <div className="space-y-4">
-              <div className="flex gap-4">
-                <div className="flex flex-col items-center">
-                  <div className="w-3 h-3 bg-primary rounded-full"></div>
-                  <div className="w-0.5 h-full bg-border"></div>
-                </div>
-                <div className="flex-1 pb-4">
-                  <p className="font-medium">Tạo hoạt động mới</p>
-                  <p className="text-sm text-muted-foreground">
-                    {activity.createdBy} - {activity.createdAt ? format(new Date(activity.createdAt), 'HH:mm dd/MM/yyyy') : 'Không xác định'}
-                  </p>
-                </div>
-              </div>
-              {activity.updatedAt && (
-                <div className="flex gap-4">
-                  <div className="flex flex-col items-center">
-                    <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-                    <div className="w-0.5 h-full bg-border"></div>
-                  </div>
-                  <div className="flex-1 pb-4">
-                    <p className="font-medium">Cập nhật thông tin</p>
-                    <p className="text-sm text-muted-foreground">
-                      {activity.createdBy} - {format(new Date(activity.updatedAt), 'HH:mm dd/MM/yyyy')}
-                    </p>
-                  </div>
-                </div>
-              )}
             </div>
           </TabsContent>
         </Tabs>

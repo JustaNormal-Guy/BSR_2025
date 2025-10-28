@@ -28,6 +28,11 @@ export default function Activities() {
     dateTo: '',
   });
 
+  // Chỉ hiển thị hoạt động có trạng thái "Nháp" và "Chờ duyệt"
+  const planningActivities = activities.filter(a => 
+    a.status === 'draft' || a.status === 'pending'
+  );
+
   const handleDelete = (id: string) => {
     if (confirm('Bạn có chắc chắn muốn xóa hoạt động này?')) {
       setActivities(activities.filter(a => a.id !== id));
@@ -62,7 +67,7 @@ export default function Activities() {
     }, 1000);
   };
 
-  const filteredActivities = activities.filter(activity => {
+  const filteredActivities = planningActivities.filter(activity => {
     if (searchQuery && !activity.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
         !activity.organizingUnit.toLowerCase().includes(searchQuery.toLowerCase())) {
       return false;
