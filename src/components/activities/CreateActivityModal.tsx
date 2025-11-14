@@ -21,6 +21,13 @@ import {
 import { X, Plus, Save, Send, Upload, FileText, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 
+// Mock data cho nghị quyết (sẽ import từ context sau)
+const mockResolutions = [
+  { id: 1, code: 'NQ 01-NQ/TW', title: 'NQ 01-NQ/TW về phát triển kinh tế - xã hội 2025' },
+  { id: 2, code: 'NQ 05-NQ/TW', title: 'NQ 05-NQ/TW về công tác tuyên truyền' },
+  { id: 3, code: 'NQ 08-NQ/TW', title: 'NQ 08-NQ/TW về xây dựng đảng trong sạch vững mạnh' },
+];
+
 interface AttachedFile {
   id: string;
   name: string;
@@ -48,6 +55,7 @@ export function CreateActivityModal({ activity, onClose, onSave }: CreateActivit
     status: 'draft',
   });
 
+  const [selectedResolution, setSelectedResolution] = useState<string>('');
   const [attachedFiles, setAttachedFiles] = useState<AttachedFile[]>([]);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -197,6 +205,31 @@ export function CreateActivityModal({ activity, onClose, onSave }: CreateActivit
                     ))}
                   </SelectContent>
                 </Select>
+              </div>
+
+              <div>
+                <Label>Nghị quyết liên quan</Label>
+                <Select
+                  value={selectedResolution}
+                  onValueChange={setSelectedResolution}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Chọn nghị quyết (nếu có)" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-popover">
+                    <SelectItem value="none">Không liên quan nghị quyết</SelectItem>
+                    {mockResolutions.map(resolution => (
+                      <SelectItem key={resolution.id} value={resolution.id.toString()}>
+                        {resolution.code}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {selectedResolution && selectedResolution !== 'none' && (
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {mockResolutions.find(r => r.id.toString() === selectedResolution)?.title}
+                  </p>
+                )}
               </div>
 
               <div>

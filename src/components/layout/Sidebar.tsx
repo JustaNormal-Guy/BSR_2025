@@ -1,9 +1,10 @@
 import { NavLink, useLocation } from 'react-router-dom';
-import { BarChart3, Calendar, CheckCircle, Settings, LayoutDashboard } from 'lucide-react';
+import { BarChart3, Calendar, CheckCircle, Settings, LayoutDashboard, FileText } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const menuItems = [
   { path: '/', icon: LayoutDashboard, label: 'Tổng quan' },
+  { path: '/resolutions', icon: FileText, label: 'Nghị quyết & Kế hoạch' },
   { path: '/activities', icon: Calendar, label: 'Lập kế hoạch và Quản lý hoạt động' },
   { path: '/results', icon: CheckCircle, label: 'Cập nhật kết quả thực hiện' },
   { path: '/statistics', icon: BarChart3, label: 'Thống kê và Báo cáo' },
