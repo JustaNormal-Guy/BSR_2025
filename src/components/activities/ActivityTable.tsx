@@ -3,7 +3,7 @@ import { Activity } from '@/types';
 import { activityTypeLabels, statusLabels } from '@/data/mockData';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Eye, Edit, Trash2, Send, FileCheck } from 'lucide-react';
+import { Eye, Edit, Trash2, Send, FileCheck, CheckCircle } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 
@@ -13,9 +13,10 @@ interface ActivityTableProps {
   onEdit: (activity: Activity) => void;
   onDelete: (id: string) => void;
   onSendApproval: (id: string) => void;
+  onApprove: (id: string) => void;
 }
 
-export function ActivityTable({ activities, onView, onEdit, onDelete, onSendApproval }: ActivityTableProps) {
+export function ActivityTable({ activities, onView, onEdit, onDelete, onSendApproval, onApprove }: ActivityTableProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
@@ -27,6 +28,8 @@ export function ActivityTable({ activities, onView, onEdit, onDelete, onSendAppr
     const classes = {
       draft: 'status-badge status-draft',
       pending: 'status-badge status-pending',
+      inprogress: 'status-badge status-inprogress',
+      completed: 'status-badge status-completed',
     };
     return classes[status as keyof typeof classes] || 'status-badge';
   };
@@ -78,8 +81,8 @@ export function ActivityTable({ activities, onView, onEdit, onDelete, onSendAppr
                       <Eye className="w-4 h-4" />
                     </Button>
                     
-                    {/* Chỉnh sửa: chỉ cho Nháp, Đang thực hiện */}
-                    {(activity.status === 'draft' || activity.status === 'pending') && (
+                    {/* Chỉnh sửa: cho Nháp, Chờ duyệt và Đang thực hiện (không cho sửa khi Hoàn thành) */}
+                    {(activity.status === 'draft' || activity.status === 'pending' || activity.status === 'inprogress') && (
                       <Button
                         size="sm"
                         variant="ghost"
@@ -103,16 +106,29 @@ export function ActivityTable({ activities, onView, onEdit, onDelete, onSendAppr
                       </Button>
                     )}
                     
-                    {/* Gửi duyệt: cho Nháp và Đang thực hiện */}
+                    {/* Gửi duyệt: cho Nháp */}
                     {activity.status === 'draft' && (
                       <Button
                         size="sm"
                         variant="ghost"
                         onClick={() => onSendApproval(activity.id)}
-                        title={activity.status === 'draft' ? 'Gửi trình duyệt' : 'Gửi duyệt kết quả'}
+                        title="Gửi trình duyệt"
                         className="text-blue-600 hover:text-blue-700"
                       >
                         <Send className="w-4 h-4" />
+                      </Button>
+                    )}
+                    
+                    {/* Phê duyệt: cho Chờ duyệt */}
+                    {activity.status === 'pending' && (
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => onApprove(activity.id)}
+                        title="Phê duyệt"
+                        className="text-green-600 hover:text-green-700"
+                      >
+                        <CheckCircle className="w-4 h-4" />
                       </Button>
                     )}
                   </div>

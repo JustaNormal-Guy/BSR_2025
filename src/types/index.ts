@@ -42,6 +42,16 @@ export interface Activity {
   createdBy?: string;
   createdAt?: string;
   updatedAt?: string;
+  // Thông tin thực tế sau khi thực hiện
+  actualData?: {
+    name?: string;
+    type?: ActivityType;
+    organizingUnit?: string;
+    startTime?: string;
+    endTime?: string;
+    location?: string;
+    description?: string;
+  };
 }
 
 export interface ActivityResult {

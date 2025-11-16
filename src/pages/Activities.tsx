@@ -28,9 +28,9 @@ export default function Activities() {
     dateTo: '',
   });
 
-  // Chỉ hiển thị hoạt động có trạng thái "Nháp" và "Chờ duyệt"
+  // Chỉ hiển thị hoạt động có trạng thái "Nháp", "Chờ duyệt", "Đang thực hiện" và "Hoàn thành"
   const planningActivities = activities.filter(a => 
-    a.status === 'draft' || a.status === 'pending'
+    a.status === 'draft' || a.status === 'pending' || a.status === 'inprogress' || a.status === 'completed'
   );
 
   const handleDelete = (id: string) => {
@@ -57,6 +57,18 @@ export default function Activities() {
         a.id === id ? { ...a, status: 'pending' as ActivityStatus } : a
       ));
       toast.success('Đã gửi trình duyệt trên hệ thống Doffice thành công');
+    }
+  };
+
+  const handleApprove = (id: string) => {
+    const activity = activities.find(a => a.id === id);
+    if (activity && activity.status === 'pending') {
+      if (confirm('Bạn có chắc chắn muốn phê duyệt hoạt động này?')) {
+        setActivities(activities.map(a => 
+          a.id === id ? { ...a, status: 'inprogress' as ActivityStatus } : a
+        ));
+        toast.success('Đã phê duyệt hoạt động thành công. Trạng thái chuyển sang "Đang thực hiện"');
+      }
     }
   };
 
@@ -148,6 +160,7 @@ export default function Activities() {
           onEdit={handleEdit}
           onDelete={handleDelete}
           onSendApproval={handleSendApproval}
+          onApprove={handleApprove}
         />
 
         {/* Modals */}

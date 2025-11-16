@@ -18,7 +18,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { X, Plus, Save, Send, Upload, FileText, Trash2 } from 'lucide-react';
+import { X, Plus, Save, Send, Upload, FileText, Trash2, Edit } from 'lucide-react';
 import { toast } from 'sonner';
 
 // Mock data cho nghị quyết (sẽ import từ context sau)
@@ -84,11 +84,14 @@ export function CreateActivityModal({ activity, onClose, onSave }: CreateActivit
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSave = (status: 'draft' | 'pending') => {
+  const handleSave = (status: 'draft' | 'pending' | 'inprogress' | 'completed') => {
     if (!validate()) {
       toast.error('Vui lòng điền đầy đủ các trường bắt buộc');
       return;
     }
+
+    // Nếu đang ở trạng thái inprogress và click Cập nhật -> chuyển sang completed và lưu actualData
+    const isCompletingActivity = activity?.status === 'inprogress' && status === 'completed';
 
     const savedActivity: Activity = {
       id: activity?.id || Date.now().toString(),
@@ -110,11 +113,24 @@ export function CreateActivityModal({ activity, onClose, onSave }: CreateActivit
         size: file.size,
         type: file.type
       })),
+      // Nếu đang cập nhật từ inprogress, lưu thông tin thực tế
+      actualData: isCompletingActivity ? {
+        name: formData.name,
+        type: formData.type,
+        organizingUnit: formData.organizingUnit,
+        startTime: formData.startTime,
+        endTime: formData.endTime,
+        location: formData.location,
+        description: formData.description,
+      } : activity?.actualData,
     };
 
     onSave(savedActivity);
     
-    const statusMessage = status === 'draft' ? 'Đã lưu nháp' : 'Đã gửi trình duyệt';
+    let statusMessage = 'Đã lưu nháp';
+    if (status === 'pending') statusMessage = 'Đã gửi trình duyệt';
+    if (status === 'inprogress') statusMessage = 'Đã cập nhật hoạt động';
+    if (status === 'completed') statusMessage = 'Đã hoàn thành và lưu kết quả thực tế';
     toast.success(statusMessage);
   };
 
@@ -339,14 +355,25 @@ export function CreateActivityModal({ activity, onClose, onSave }: CreateActivit
             <Button variant="outline" onClick={onClose}>
               Hủy bỏ
             </Button>
-            <Button variant="secondary" onClick={() => handleSave('draft')} className="gap-2">
-              <Save className="w-4 h-4" />
-              Lưu nháp
-            </Button>
-            <Button onClick={() => handleSave('pending')} className="gap-2">
-              <Send className="w-4 h-4" />
-              Lưu và gửi trình duyệt
-            </Button>
+            {activity?.status === 'inprogress' ? (
+              // Nút cho trạng thái "Đang thực hiện" - click sẽ chuyển sang "Hoàn thành"
+              <Button onClick={() => handleSave('completed')} className="gap-2">
+                <Edit className="w-4 h-4" />
+                Cập nhật
+              </Button>
+            ) : (
+              // Nút cho trạng thái "Nháp" và "Chờ duyệt"
+              <>
+                <Button variant="secondary" onClick={() => handleSave('draft')} className="gap-2">
+                  <Save className="w-4 h-4" />
+                  Lưu nháp
+                </Button>
+                <Button onClick={() => handleSave('pending')} className="gap-2">
+                  <Send className="w-4 h-4" />
+                  Lưu và gửi trình duyệt
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </DialogContent>

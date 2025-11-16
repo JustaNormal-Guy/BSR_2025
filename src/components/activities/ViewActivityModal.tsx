@@ -43,47 +43,100 @@ export function ViewActivityModal({ activity, onClose, onEdit }: ViewActivityMod
           </TabsList>
 
           <TabsContent value="info" className="space-y-4 mt-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">Tên hoạt động</label>
-                <p className="mt-1 font-semibold">{activity.name}</p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">Trạng thái</label>
-                <p className="mt-1">
-                  <span className={getStatusClass(activity.status)}>
-                    {statusLabels[activity.status]}
-                  </span>
-                </p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">Loại hình</label>
-                <p className="mt-1">{activityTypeLabels[activity.type]}</p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">Đơn vị tổ chức</label>
-                <p className="mt-1">{activity.organizingUnit}</p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">Thời gian bắt đầu</label>
-                <p className="mt-1">{format(new Date(activity.startTime), 'HH:mm - dd/MM/yyyy')}</p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">Thời gian kết thúc</label>
-                <p className="mt-1">
-                  {activity.endTime ? format(new Date(activity.endTime), 'HH:mm - dd/MM/yyyy') : 'Chưa xác định'}
-                </p>
-              </div>
-              <div className="col-span-2">
-                <label className="text-sm font-medium text-muted-foreground">Địa điểm</label>
-                <p className="mt-1">{activity.location}</p>
-              </div>
-              {activity.description && (
-                <div className="col-span-2">
-                  <label className="text-sm font-medium text-muted-foreground">Mô tả</label>
-                  <p className="mt-1 text-sm">{activity.description}</p>
-                </div>
-              )}
+            {/* Bảng 3 cột: Nội dung - Kế hoạch - Thực tế */}
+            <div className="border rounded-lg overflow-hidden">
+              <table className="w-full">
+                <thead className="bg-muted">
+                  <tr>
+                    <th className="px-4 py-3 text-left text-sm font-semibold w-1/4">Nội dung</th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold w-1/3">Kế hoạch</th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold w-1/3">Thực tế</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y">
+                  {/* Tên chương trình hoạt động */}
+                  <tr className="hover:bg-muted/20">
+                    <td className="px-4 py-3 text-sm font-medium text-muted-foreground">Tên chương trình hoạt động</td>
+                    <td className="px-4 py-3 text-sm font-semibold">{activity.name}</td>
+                    <td className="px-4 py-3 text-sm">
+                      {activity.actualData?.name || <span className="text-muted-foreground italic">Chưa cập nhật</span>}
+                    </td>
+                  </tr>
+
+                  {/* Loại hình hoạt động */}
+                  <tr className="hover:bg-muted/20">
+                    <td className="px-4 py-3 text-sm font-medium text-muted-foreground">Loại hình hoạt động</td>
+                    <td className="px-4 py-3 text-sm">{activityTypeLabels[activity.type]}</td>
+                    <td className="px-4 py-3 text-sm">
+                      {activity.actualData?.type ? activityTypeLabels[activity.actualData.type] : <span className="text-muted-foreground italic">Chưa cập nhật</span>}
+                    </td>
+                  </tr>
+
+                  {/* Đơn vị tổ chức */}
+                  <tr className="hover:bg-muted/20">
+                    <td className="px-4 py-3 text-sm font-medium text-muted-foreground">Đơn vị tổ chức</td>
+                    <td className="px-4 py-3 text-sm">{activity.organizingUnit}</td>
+                    <td className="px-4 py-3 text-sm">
+                      {activity.actualData?.organizingUnit || <span className="text-muted-foreground italic">Chưa cập nhật</span>}
+                    </td>
+                  </tr>
+
+                  {/* Nghị quyết liên quan */}
+                  <tr className="hover:bg-muted/20">
+                    <td className="px-4 py-3 text-sm font-medium text-muted-foreground">Nghị quyết liên quan</td>
+                    <td className="px-4 py-3 text-sm">NQ 01-NQ/TW</td>
+                    <td className="px-4 py-3 text-sm text-muted-foreground italic">Chưa cập nhật</td>
+                  </tr>
+
+                  {/* Thời gian bắt đầu */}
+                  <tr className="hover:bg-muted/20">
+                    <td className="px-4 py-3 text-sm font-medium text-muted-foreground">Thời gian bắt đầu</td>
+                    <td className="px-4 py-3 text-sm">{format(new Date(activity.startTime), 'HH:mm:ss dd/MM/yyyy')}</td>
+                    <td className="px-4 py-3 text-sm">
+                      {activity.actualData?.startTime ? format(new Date(activity.actualData.startTime), 'HH:mm:ss dd/MM/yyyy') : <span className="text-muted-foreground italic">Chưa cập nhật</span>}
+                    </td>
+                  </tr>
+
+                  {/* Thời gian kết thúc */}
+                  <tr className="hover:bg-muted/20">
+                    <td className="px-4 py-3 text-sm font-medium text-muted-foreground">Thời gian kết thúc</td>
+                    <td className="px-4 py-3 text-sm">
+                      {activity.endTime ? format(new Date(activity.endTime), 'HH:mm:ss dd/MM/yyyy') : 'Chưa xác định'}
+                    </td>
+                    <td className="px-4 py-3 text-sm">
+                      {activity.actualData?.endTime ? format(new Date(activity.actualData.endTime), 'HH:mm:ss dd/MM/yyyy') : <span className="text-muted-foreground italic">Chưa cập nhật</span>}
+                    </td>
+                  </tr>
+
+                  {/* Địa điểm */}
+                  <tr className="hover:bg-muted/20">
+                    <td className="px-4 py-3 text-sm font-medium text-muted-foreground">Địa điểm</td>
+                    <td className="px-4 py-3 text-sm">{activity.location}</td>
+                    <td className="px-4 py-3 text-sm">
+                      {activity.actualData?.location || <span className="text-muted-foreground italic">Chưa cập nhật</span>}
+                    </td>
+                  </tr>
+
+                  {/* Mô tả nội dung */}
+                  <tr className="hover:bg-muted/20">
+                    <td className="px-4 py-3 text-sm font-medium text-muted-foreground">Mô tả nội dung</td>
+                    <td className="px-4 py-3 text-sm">
+                      {activity.description || 'Không có mô tả'}
+                    </td>
+                    <td className="px-4 py-3 text-sm">
+                      {activity.actualData?.description || <span className="text-muted-foreground italic">Chưa cập nhật</span>}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            {/* Trạng thái */}
+            <div className="flex items-center gap-2 pt-4">
+              <span className="text-sm font-medium text-muted-foreground">Trạng thái:</span>
+              <span className={getStatusClass(activity.status)}>
+                {statusLabels[activity.status]}
+              </span>
             </div>
           </TabsContent>
 
